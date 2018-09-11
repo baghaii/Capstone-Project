@@ -1,0 +1,4 @@
+<resources>
+  <string name="app_name">AlumniConnector</string>
+  <string name="chat_hint">Chat with alumni</string>
+</resources>
