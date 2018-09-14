@@ -1,4 +1,9 @@
 <resources>
   <string name="app_name">AlumniConnector</string>
+
+  <!-- activity_chat.xml-->
   <string name="chat_hint">Chat with alumni</string>
+
+  <!-- chat_menu.xml -->
+  <string name="sign_out">Sign out</string>
 </resources>
