@@ -24,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.sepidehmiller.alumniconnector.data.ChatMessage;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -50,6 +51,9 @@ public class ChatActivity extends AppCompatActivity {
   private FirebaseDatabase mFirebaseDatabase;
   private DatabaseReference mDatabaseReference;
   private ChildEventListener mChildEventListener;
+
+  private FirebaseAuth mFirebaseAuth;
+  private FirebaseAuth.AuthStateListener mAuthStateListener;
 
   private MessageAdapter mMessageAdapter;
 
@@ -82,37 +86,13 @@ public class ChatActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_chat);
 
-    if (FirebaseAuth.getInstance().getCurrentUser() == null) {
-      startActivityForResult(
-          AuthUI.getInstance()
-              .createSignInIntentBuilder()
-              .setLogo(R.drawable.plug)
-              .build(),
-             SIGN_IN_REQUEST_CODE);
-    } else {
-      mUserName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-
-      if (mUserName == null) {
-        mUserName = "User";
-      }
-
-      Toast.makeText(this,
-          "Welcome " + mUserName,
-          Toast.LENGTH_LONG).show();
-          displayChatMessages();
-    }
+    mFirebaseAuth = FirebaseAuth.getInstance();
 
     mFirebaseDatabase = FirebaseDatabase.getInstance();
     mDatabaseReference = mFirebaseDatabase.getReference().child("messages");
 
     ButterKnife.bind(this);
-    List<ChatMessage> chatMessages = new ArrayList<>();
-    mMessageAdapter = new MessageAdapter(this, R.layout.item_message, chatMessages);
 
-    //The child event listener below relied heavily on the Friendly Chat tutorial
-    //https://github.com/udacity/and-nd-firebase/blob/1.03-firebase-database-read/app/src/main/java/com/google/firebase/udacity/friendlychat/MainActivity.java
-
-    mChatListView.setAdapter(mMessageAdapter);
 
     mChildEventListener = new ChildEventListener() {
       @Override
@@ -147,9 +127,31 @@ public class ChatActivity extends AppCompatActivity {
     mFab.setEnabled(false);
 
 
-
     mDatabaseReference.addChildEventListener(mChildEventListener);
+    mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+      @Override
+      public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+          if (firebaseAuth.getCurrentUser() != null) {
+            //signed in
+            mUserName = mFirebaseAuth.getCurrentUser().getDisplayName();
 
+            displayChatMessages();
+          } else {
+            //signed out
+            List<AuthUI.IdpConfig> providers = Arrays.asList(
+                new AuthUI.IdpConfig.EmailBuilder().build(),
+                new AuthUI.IdpConfig.GoogleBuilder().build());
+
+            startActivityForResult(
+                AuthUI.getInstance()
+                .createSignInIntentBuilder()
+                .setAvailableProviders(providers)
+                .setLogo(R.drawable.ic_plug)
+                .build(),
+                SIGN_IN_REQUEST_CODE);
+          }
+      }
+    };
 
   }
 
@@ -170,7 +172,27 @@ public class ChatActivity extends AppCompatActivity {
     }
   }
 
-  private void displayChatMessages() { }
+  @Override
+  protected void onPause() {
+    super.onPause();
+    mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+  }
+
+  @Override
+  protected void onResume() {
+    super.onResume();
+    mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+  }
+
+  private void displayChatMessages() {
+    List<ChatMessage> chatMessages = new ArrayList<>();
+    mMessageAdapter = new MessageAdapter(this, R.layout.item_message, chatMessages);
+
+    //The child event listener below relied heavily on the Friendly Chat tutorial
+    //https://github.com/udacity/and-nd-firebase/blob/1.03-firebase-database-read/app/src/main/java/com/google/firebase/udacity/friendlychat/MainActivity.java
+
+    mChatListView.setAdapter(mMessageAdapter);
+  }
 
   @OnTextChanged(R.id.chatEditText)
   public void onTextChanged(CharSequence text) {
