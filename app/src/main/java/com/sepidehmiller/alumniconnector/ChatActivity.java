@@ -13,8 +13,6 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.firebase.ui.auth.AuthUI;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -38,6 +36,8 @@ import butterknife.OnTextChanged;
 
 public class ChatActivity extends AppCompatActivity {
   public static final int SIGN_IN_REQUEST_CODE = 101;
+
+  private static final String ANONYMOUS = "User";
 
   @BindView(R.id.floatingActionButton)
   FloatingActionButton mFab;
@@ -68,15 +68,7 @@ public class ChatActivity extends AppCompatActivity {
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
     if (item.getItemId() == R.id.menu_sign_out) {
-      AuthUI.getInstance().signOut(this)
-          .addOnCompleteListener(new OnCompleteListener<Void>() {
-            @Override
-            public void onComplete(@NonNull Task<Void> task) {
-              Toast.makeText(ChatActivity.this,
-                  "You have been signed out", Toast.LENGTH_LONG).show();
-              finish();
-            }
-          });
+      AuthUI.getInstance().signOut(this);
     }
     return true;
   }
@@ -93,66 +85,91 @@ public class ChatActivity extends AppCompatActivity {
 
     ButterKnife.bind(this);
 
-
-    mChildEventListener = new ChildEventListener() {
-      @Override
-      public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-        ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
-        mMessageAdapter.add(chatMessage);
-      }
-
-      @Override
-      public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-      }
-
-      @Override
-      public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
-
-      }
-
-      @Override
-      public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
-
-      }
-
-      @Override
-      public void onCancelled(@NonNull DatabaseError databaseError) {
-
-      }
-    };
+    List<ChatMessage> chatMessages = new ArrayList<>();
+    mMessageAdapter = new MessageAdapter(this, R.layout.item_message, chatMessages);
+    mChatListView.setAdapter(mMessageAdapter);
 
 
     mFab.setBackgroundTintList(getResources().getColorStateList(R.color.button_color_list));
     mFab.setEnabled(false);
 
 
-    mDatabaseReference.addChildEventListener(mChildEventListener);
     mAuthStateListener = new FirebaseAuth.AuthStateListener() {
       @Override
       public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-          if (firebaseAuth.getCurrentUser() != null) {
-            //signed in
-            mUserName = mFirebaseAuth.getCurrentUser().getDisplayName();
+        if (firebaseAuth.getCurrentUser() != null) {
+          //signed in
+          onSignedInInitialize(mFirebaseAuth.getCurrentUser().getDisplayName());
+        } else {
+          //signed out
+          onSignedOutCleanUp();
+          List<AuthUI.IdpConfig> providers = Arrays.asList(
+              new AuthUI.IdpConfig.EmailBuilder().build(),
+              new AuthUI.IdpConfig.GoogleBuilder().build());
 
-            displayChatMessages();
-          } else {
-            //signed out
-            List<AuthUI.IdpConfig> providers = Arrays.asList(
-                new AuthUI.IdpConfig.EmailBuilder().build(),
-                new AuthUI.IdpConfig.GoogleBuilder().build());
-
-            startActivityForResult(
-                AuthUI.getInstance()
-                .createSignInIntentBuilder()
-                .setAvailableProviders(providers)
-                .setLogo(R.drawable.ic_plug)
-                .build(),
-                SIGN_IN_REQUEST_CODE);
-          }
+          startActivityForResult(
+              AuthUI.getInstance()
+                  .createSignInIntentBuilder()
+                  .setAvailableProviders(providers)
+                  .setLogo(R.drawable.ic_plug)
+                  .build(),
+              SIGN_IN_REQUEST_CODE);
+        }
       }
     };
 
+  }
+
+  private void onSignedInInitialize(String username) {
+    mUserName = ANONYMOUS;
+    attachDatabaseReadListener();
+  }
+
+  private void onSignedOutCleanUp() {
+    mUserName = ANONYMOUS;
+    detachDatabaseReadListener();
+    mMessageAdapter.clear();
+
+  }
+
+  public void attachDatabaseReadListener() {
+    //The child event listener below relied heavily on the Friendly Chat tutorial
+    //https://github.com/udacity/and-nd-firebase/blob/1.03-firebase-database-read/app/src/main/java/com/google/firebase/udacity/friendlychat/MainActivity.java
+
+    if (mChildEventListener == null) {
+      mChildEventListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+          ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
+          mMessageAdapter.add(chatMessage);
+        }
+
+        @Override
+        public void onChildChanged(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+        }
+
+        @Override
+        public void onChildRemoved(@NonNull DataSnapshot dataSnapshot) {
+        }
+
+        @Override
+        public void onChildMoved(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+        }
+      };
+
+      mDatabaseReference.addChildEventListener(mChildEventListener);
+    }
+  }
+
+  public void detachDatabaseReadListener() {
+    if (mChildEventListener != null) {
+      mDatabaseReference.removeEventListener(mChildEventListener);
+      mChildEventListener = null;
+    }
   }
 
   @Override
@@ -176,6 +193,9 @@ public class ChatActivity extends AppCompatActivity {
   protected void onPause() {
     super.onPause();
     mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
+    detachDatabaseReadListener();
+    mMessageAdapter.clear();
+
   }
 
   @Override
@@ -184,19 +204,9 @@ public class ChatActivity extends AppCompatActivity {
     mFirebaseAuth.addAuthStateListener(mAuthStateListener);
   }
 
-  private void displayChatMessages() {
-    List<ChatMessage> chatMessages = new ArrayList<>();
-    mMessageAdapter = new MessageAdapter(this, R.layout.item_message, chatMessages);
-
-    //The child event listener below relied heavily on the Friendly Chat tutorial
-    //https://github.com/udacity/and-nd-firebase/blob/1.03-firebase-database-read/app/src/main/java/com/google/firebase/udacity/friendlychat/MainActivity.java
-
-    mChatListView.setAdapter(mMessageAdapter);
-  }
-
   @OnTextChanged(R.id.chatEditText)
   public void onTextChanged(CharSequence text) {
-    if (text.toString().trim().length() > 0 ) {
+    if (text.toString().trim().length() > 0) {
       mFab.setEnabled(true);
     } else {
       mFab.setEnabled(false);
