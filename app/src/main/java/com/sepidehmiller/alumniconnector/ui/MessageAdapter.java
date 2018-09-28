@@ -1,4 +1,4 @@
-package com.sepidehmiller.alumniconnector;
+package com.sepidehmiller.alumniconnector.ui;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
+import com.sepidehmiller.alumniconnector.R;
 import com.sepidehmiller.alumniconnector.data.ChatMessage;
 
 import java.util.List;

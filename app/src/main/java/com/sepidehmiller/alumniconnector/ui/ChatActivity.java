@@ -1,10 +1,11 @@
-package com.sepidehmiller.alumniconnector;
+package com.sepidehmiller.alumniconnector.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -19,6 +20,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.sepidehmiller.alumniconnector.R;
 import com.sepidehmiller.alumniconnector.data.ChatMessage;
 
 import java.util.ArrayList;
@@ -67,10 +69,18 @@ public class ChatActivity extends AppCompatActivity {
 
   @Override
   public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == R.id.menu_sign_out) {
-      AuthUI.getInstance().signOut(this);
+    switch(item.getItemId()) {
+
+      case android.R.id.home:
+        NavUtils.navigateUpFromSameTask(this);
+        return true;
+
+      case R.id.menu_sign_out:
+        AuthUI.getInstance().signOut(this);
+        return true;
+
     }
-    return true;
+    return super.onOptionsItemSelected(item);
   }
 
   @Override
@@ -121,7 +131,7 @@ public class ChatActivity extends AppCompatActivity {
   }
 
   private void onSignedInInitialize(String username) {
-    mUserName = ANONYMOUS;
+    mUserName = username;
     attachDatabaseReadListener();
   }
 
