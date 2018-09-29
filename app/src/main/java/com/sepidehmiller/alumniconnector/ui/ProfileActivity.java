@@ -12,6 +12,8 @@ import butterknife.ButterKnife;
 
 public class ProfileActivity extends AppCompatActivity {
 
+  private String mName;
+
   @BindView(R.id.classSpinner)
   Spinner mClassSpinner;
 
@@ -45,6 +47,12 @@ public class ProfileActivity extends AppCompatActivity {
     setContentView(R.layout.activity_profile);
     ButterKnife.bind(this);
 
+    if (getIntent().hasExtra(SelectorActivity.NAME_EXTRA)) {
+      mName = getIntent().getStringExtra(SelectorActivity.NAME_EXTRA);
+    } else {
+      mName = SelectorActivity.ANONYMOUS;
+    }
+
     setupUI();
   }
 
@@ -52,6 +60,7 @@ public class ProfileActivity extends AppCompatActivity {
     mClassSpinner.setSelection(10);
     mStateSpinner.setSelection(23);
     mCountrySpinner.setSelection(222);
+    mNameEditText.setText(mName);
   }
 
 }

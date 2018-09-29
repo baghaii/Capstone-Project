@@ -1,19 +1,13 @@
 package com.sepidehmiller.alumniconnector.ui;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -24,7 +18,6 @@ import com.sepidehmiller.alumniconnector.R;
 import com.sepidehmiller.alumniconnector.data.ChatMessage;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import butterknife.BindView;
@@ -37,9 +30,7 @@ import butterknife.OnTextChanged;
 
 
 public class ChatActivity extends AppCompatActivity {
-  public static final int SIGN_IN_REQUEST_CODE = 101;
-
-  private static final String ANONYMOUS = "User";
+  private final String ANONYMOUS = "Anonymous";
 
   @BindView(R.id.floatingActionButton)
   FloatingActionButton mFab;
@@ -50,38 +41,14 @@ public class ChatActivity extends AppCompatActivity {
   @BindView(R.id.chatListView)
   ListView mChatListView;
 
+  private FirebaseAuth mFirebaseAuth;
   private FirebaseDatabase mFirebaseDatabase;
   private DatabaseReference mDatabaseReference;
   private ChildEventListener mChildEventListener;
 
-  private FirebaseAuth mFirebaseAuth;
-  private FirebaseAuth.AuthStateListener mAuthStateListener;
-
   private MessageAdapter mMessageAdapter;
 
   private String mUserName;
-
-  @Override
-  public boolean onCreateOptionsMenu(Menu menu) {
-    getMenuInflater().inflate(R.menu.chat_menu, menu);
-    return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    switch(item.getItemId()) {
-
-      case android.R.id.home:
-        NavUtils.navigateUpFromSameTask(this);
-        return true;
-
-      case R.id.menu_sign_out:
-        AuthUI.getInstance().signOut(this);
-        return true;
-
-    }
-    return super.onOptionsItemSelected(item);
-  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -89,9 +56,14 @@ public class ChatActivity extends AppCompatActivity {
     setContentView(R.layout.activity_chat);
 
     mFirebaseAuth = FirebaseAuth.getInstance();
-
     mFirebaseDatabase = FirebaseDatabase.getInstance();
     mDatabaseReference = mFirebaseDatabase.getReference().child("messages");
+
+    mUserName = mFirebaseAuth.getCurrentUser().getDisplayName();
+
+    if (mUserName == null || mUserName.isEmpty()) {
+      mUserName = ANONYMOUS;
+    }
 
     ButterKnife.bind(this);
 
@@ -99,46 +71,8 @@ public class ChatActivity extends AppCompatActivity {
     mMessageAdapter = new MessageAdapter(this, R.layout.item_message, chatMessages);
     mChatListView.setAdapter(mMessageAdapter);
 
-
     mFab.setBackgroundTintList(getResources().getColorStateList(R.color.button_color_list));
     mFab.setEnabled(false);
-
-
-    mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-      @Override
-      public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-        if (firebaseAuth.getCurrentUser() != null) {
-          //signed in
-          onSignedInInitialize(mFirebaseAuth.getCurrentUser().getDisplayName());
-        } else {
-          //signed out
-          onSignedOutCleanUp();
-          List<AuthUI.IdpConfig> providers = Arrays.asList(
-              new AuthUI.IdpConfig.EmailBuilder().build(),
-              new AuthUI.IdpConfig.GoogleBuilder().build());
-
-          startActivityForResult(
-              AuthUI.getInstance()
-                  .createSignInIntentBuilder()
-                  .setAvailableProviders(providers)
-                  .setLogo(R.drawable.ic_plug)
-                  .build(),
-              SIGN_IN_REQUEST_CODE);
-        }
-      }
-    };
-
-  }
-
-  private void onSignedInInitialize(String username) {
-    mUserName = username;
-    attachDatabaseReadListener();
-  }
-
-  private void onSignedOutCleanUp() {
-    mUserName = ANONYMOUS;
-    detachDatabaseReadListener();
-    mMessageAdapter.clear();
 
   }
 
@@ -183,26 +117,8 @@ public class ChatActivity extends AppCompatActivity {
   }
 
   @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-    super.onActivityResult(requestCode, resultCode, data);
-
-    if (requestCode == SIGN_IN_REQUEST_CODE) {
-      if (resultCode == RESULT_OK) {
-        Toast.makeText(this, "Successfully signed in. Welcome!", Toast.LENGTH_LONG)
-            .show();
-        mUserName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-      } else {
-        Toast.makeText(this, "We couldn't sign you in. Please try later.", Toast.LENGTH_LONG)
-            .show();
-        finish();
-      }
-    }
-  }
-
-  @Override
   protected void onPause() {
     super.onPause();
-    mFirebaseAuth.removeAuthStateListener(mAuthStateListener);
     detachDatabaseReadListener();
     mMessageAdapter.clear();
 
@@ -211,7 +127,7 @@ public class ChatActivity extends AppCompatActivity {
   @Override
   protected void onResume() {
     super.onResume();
-    mFirebaseAuth.addAuthStateListener(mAuthStateListener);
+    attachDatabaseReadListener();
   }
 
   @OnTextChanged(R.id.chatEditText)
