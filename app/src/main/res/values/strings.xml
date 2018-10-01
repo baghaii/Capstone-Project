@@ -10,6 +10,9 @@
   <!-- activity_selector.xml -->
   <string name="chat">chat</string>
   <string name="map">map</string>
+
+  <!-- activity_profile.xml -->
+
   <string name="profile">Profile</string>
   <string name="name">Name</string>
   <string name="address_1">Address 1</string>
@@ -18,7 +21,8 @@
   <string name="city">City</string>
   <string name="zip_code">ZIP code</string>
 
-  <!-- activity_profile.xml -->
+  <string name="error_address">Need an Address</string>
+
   <string-array name="states_array">
     <item>Alabama</item>
     <item>Alaska</item>

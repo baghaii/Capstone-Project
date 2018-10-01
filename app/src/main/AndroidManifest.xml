@@ -13,7 +13,8 @@
       android:name=".ui.ChatActivity"
       android:parentActivityName=".ui.SelectorActivity">
     </activity>
-    <activity android:name=".ui.SelectorActivity">
+    <activity android:name=".ui.SelectorActivity"
+      android:launchMode="singleTop">
       <intent-filter>
         <action android:name="android.intent.action.MAIN"/>
 

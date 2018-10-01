@@ -1,129 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<ScrollView
   xmlns:android="http://schemas.android.com/apk/res/android"
   xmlns:app="http://schemas.android.com/apk/res-auto"
   xmlns:tools="http://schemas.android.com/tools"
   android:layout_width="match_parent"
-  android:layout_height="match_parent"
-  tools:context=".ui.ProfileActivity">
+  android:layout_height="match_parent">
 
-
-  <Spinner
-    android:id="@+id/classSpinner"
-    android:layout_width="wrap_content"
+  <android.support.constraint.ConstraintLayout
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:entries="@array/class_array"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent"/>
-
-  <EditText
-    android:id="@+id/nameEditText"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginEnd="8dp"
-    android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp"
-    android:ems="10"
-    android:hint="@string/name"
-    android:inputType="textPersonName"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/classSpinner"/>
-
-  <View
-    android:id="@+id/divider"
-    android:layout_width="368dp"
-    android:layout_height="1dp"
-    android:layout_marginEnd="8dp"
-    android:layout_marginLeft="8dp"
-    android:layout_marginRight="8dp"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp"
-    android:background="?android:attr/listDivider"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/nameEditText"/>
-
-  <EditText
-    android:id="@+id/address1EditText"
-    android:layout_width="259dp"
-    android:layout_height="wrap_content"
-    android:layout_marginLeft="8dp"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="8dp"
-    android:ems="10"
-    android:hint="@string/address_1"
-    android:inputType="textPostalAddress"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/divider"/>
-
-  <EditText
-    android:id="@+id/address2EditText"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:ems="10"
-    android:hint="@string/address_2"
-    app:layout_constraintEnd_toEndOf="@+id/address1EditText"
-    app:layout_constraintStart_toStartOf="@+id/address1EditText"
-    app:layout_constraintTop_toBottomOf="@+id/address1EditText"/>
-
-  <EditText
-    android:id="@+id/address3EditText"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:ems="10"
-    android:hint="@string/address_3"
-    app:layout_constraintEnd_toEndOf="@+id/address2EditText"
-    app:layout_constraintStart_toStartOf="@+id/address2EditText"
-    app:layout_constraintTop_toBottomOf="@+id/address2EditText"/>
-
-  <EditText
-    android:id="@+id/cityEditText"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:ems="10"
-    android:hint="@string/city"
-    app:layout_constraintEnd_toEndOf="@+id/address3EditText"
-    app:layout_constraintStart_toStartOf="@+id/address3EditText"
-    app:layout_constraintTop_toBottomOf="@+id/address3EditText"/>
-
-  <Spinner
-    android:id="@+id/stateSpinner"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:entries="@array/states_array"
-    app:layout_constraintEnd_toEndOf="@+id/cityEditText"
-    app:layout_constraintStart_toStartOf="@+id/cityEditText"
-    app:layout_constraintTop_toBottomOf="@+id/cityEditText"/>
-
-  <EditText
-    android:id="@+id/zipcodeEditText"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="8dp"
-    android:ems="10"
-    android:hint="@string/zip_code"
-    android:inputType="number"
-    app:layout_constraintEnd_toEndOf="@+id/stateSpinner"
-    app:layout_constraintStart_toStartOf="@+id/stateSpinner"
-    app:layout_constraintTop_toBottomOf="@+id/stateSpinner"/>
-
-  <Spinner
-    android:id="@+id/countrySpinner"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:entries="@array/countries_array"
-    app:layout_constraintEnd_toEndOf="@+id/zipcodeEditText"
-    app:layout_constraintStart_toStartOf="@+id/zipcodeEditText"
-    app:layout_constraintTop_toBottomOf="@+id/zipcodeEditText"/>
+    tools:context=".ui.ProfileActivity">
 
 
-</android.support.constraint.ConstraintLayout>
+    <Spinner
+      android:id="@+id/classSpinner"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:entries="@array/class_array"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent"/>
+
+    <EditText
+      android:id="@+id/nameEditText"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginEnd="8dp"
+      android:layout_marginLeft="8dp"
+      android:layout_marginRight="8dp"
+      android:layout_marginStart="8dp"
+      android:layout_marginTop="8dp"
+      android:ems="10"
+      android:hint="@string/name"
+      android:inputType="textPersonName"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/classSpinner"/>
+
+    <View
+      android:id="@+id/divider"
+      android:layout_width="368dp"
+      android:layout_height="1dp"
+      android:layout_marginEnd="8dp"
+      android:layout_marginLeft="8dp"
+      android:layout_marginRight="8dp"
+      android:layout_marginStart="8dp"
+      android:layout_marginTop="8dp"
+      android:background="?android:attr/listDivider"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/nameEditText"/>
+
+    <EditText
+      android:id="@+id/address1EditText"
+      android:layout_width="259dp"
+      android:layout_height="wrap_content"
+      android:layout_marginLeft="8dp"
+      android:layout_marginStart="8dp"
+      android:layout_marginTop="8dp"
+      android:ems="10"
+      android:hint="@string/address_1"
+      android:inputType="textPostalAddress"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/divider"/>
+
+    <EditText
+      android:id="@+id/address2EditText"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:ems="10"
+      android:hint="@string/address_2"
+      app:layout_constraintEnd_toEndOf="@+id/address1EditText"
+      app:layout_constraintStart_toStartOf="@+id/address1EditText"
+      app:layout_constraintTop_toBottomOf="@+id/address1EditText"/>
+
+    <EditText
+      android:id="@+id/address3EditText"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:ems="10"
+      android:hint="@string/address_3"
+      app:layout_constraintEnd_toEndOf="@+id/address2EditText"
+      app:layout_constraintStart_toStartOf="@+id/address2EditText"
+      app:layout_constraintTop_toBottomOf="@+id/address2EditText"/>
+
+    <EditText
+      android:id="@+id/cityEditText"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:ems="10"
+      android:hint="@string/city"
+      app:layout_constraintEnd_toEndOf="@+id/address3EditText"
+      app:layout_constraintStart_toStartOf="@+id/address3EditText"
+      app:layout_constraintTop_toBottomOf="@+id/address3EditText"/>
+
+    <Spinner
+      android:id="@+id/stateSpinner"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:entries="@array/states_array"
+      app:layout_constraintEnd_toEndOf="@+id/cityEditText"
+      app:layout_constraintStart_toStartOf="@+id/cityEditText"
+      app:layout_constraintTop_toBottomOf="@+id/cityEditText"/>
+
+    <EditText
+      android:id="@+id/zipcodeEditText"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="8dp"
+      android:ems="10"
+      android:hint="@string/zip_code"
+      android:inputType="number"
+      app:layout_constraintEnd_toEndOf="@+id/stateSpinner"
+      app:layout_constraintStart_toStartOf="@+id/stateSpinner"
+      app:layout_constraintTop_toBottomOf="@+id/stateSpinner"/>
+
+    <Spinner
+      android:id="@+id/countrySpinner"
+      android:layout_width="0dp"
+      android:layout_height="wrap_content"
+      android:entries="@array/countries_array"
+      app:layout_constraintEnd_toEndOf="@+id/zipcodeEditText"
+      app:layout_constraintStart_toStartOf="@+id/zipcodeEditText"
+      app:layout_constraintTop_toBottomOf="@+id/zipcodeEditText"/>
+
+
+  </android.support.constraint.ConstraintLayout>
+</ScrollView>
