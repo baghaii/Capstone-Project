@@ -1,13 +1,17 @@
 package com.sepidehmiller.alumniconnector.ui;
 
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.Spinner;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.sepidehmiller.alumniconnector.R;
 import com.sepidehmiller.alumniconnector.data.Address;
 import com.sepidehmiller.alumniconnector.data.Member;
@@ -82,6 +86,7 @@ public class ProfileActivity extends AppCompatActivity {
     mDatabaseReference = mFirebaseDatabase.getReference().child("alumni");
 
     setupUI();
+    loadData();
     mClasses = getResources().getStringArray(R.array.class_array);
     mStates = getResources().getStringArray(R.array.states_array);
     mCountries = getResources().getStringArray(R.array.countries_array);
@@ -93,6 +98,71 @@ public class ProfileActivity extends AppCompatActivity {
     mStateSpinner.setSelection(23);
     mCountrySpinner.setSelection(US_SPINNER_POSITION);
     mNameEditText.setText(mName);
+  }
+
+  private void loadData() {
+    mDatabaseReference.child(mFirebaseAuth.getUid()).addListenerForSingleValueEvent(
+        new ValueEventListener() {
+          @Override
+          public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+            Member member = dataSnapshot.getValue(Member.class);
+
+            Address address = member.getAddress();
+            String[] addressLine = address.getAddress().split("\n");
+            int length = addressLine.length;
+
+            mAddress1.setText(addressLine[0]);
+
+            if (length > 1) {
+              mAddress2.setText(addressLine[1]);
+            }
+            if (length > 2) {
+              mAddress3.setText(addressLine[2]);
+            }
+
+            mCityEditText.setText(address.getCity());
+            mZipCodeEditText.setText(address.getZipcode());
+
+            int year = member.getYear();
+            String state = address.getState();
+            String country = address.getCountry();
+
+            for (int i = 0; i < mClasses.length; i++) {
+              if (year == Integer.valueOf(mClasses[i])) {
+                mClassSpinner.setSelection(i);
+                break;
+              }
+            }
+
+            if (country.contentEquals(mCountries[US_SPINNER_POSITION])) {
+              mCountrySpinner.setSelection(US_SPINNER_POSITION);
+              for (int i = 0; i < mStates.length; i++) {
+                if (state.contentEquals(mStates[i])) {
+                  mStateSpinner.setSelection(i);
+                  break;
+                }
+              }
+
+            } else {
+
+              mStateSpinner.setEnabled(false);
+              for (int i = 0; i < mCountries.length; i++) {
+                if (country.contentEquals(mCountries[i])) {
+                  mCountrySpinner.setSelection(i);
+                  break;
+                }
+              }
+            }
+
+          }
+
+          @Override
+          public void onCancelled(@NonNull DatabaseError databaseError) {
+
+          }
+        }
+
+    );
   }
 
   @Override
@@ -113,9 +183,22 @@ public class ProfileActivity extends AppCompatActivity {
   }
 
   public Address createAddress() {
-    String streetAddress = mAddress1.getText().toString().trim() +
-        mAddress2.getText().toString().trim() +
-        mAddress3.getText().toString().trim();
+    String address1 = mAddress1.getText().toString().trim();
+    String address2 = mAddress2.getText().toString().trim();
+    String address3 = mAddress3.getText().toString().trim();
+
+    String streetAddress = "";
+    if (address1.length() > 0) {
+      streetAddress = address1;
+    }
+
+    if (address2.length() > 0) {
+      streetAddress = streetAddress + "\n" + address2;
+    }
+
+    if (address3.length() > 0) {
+      streetAddress = streetAddress + "\n" + address3;
+    }
 
     String city = mCityEditText.getText().toString().trim();
 

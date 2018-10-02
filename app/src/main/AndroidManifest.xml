@@ -22,7 +22,8 @@
       </intent-filter>
     </activity>
     <activity android:name=".ui.ProfileActivity"
-      android:parentActivityName=".ui.SelectorActivity">
+      android:parentActivityName=".ui.SelectorActivity"
+      android:windowSoftInputMode="stateHidden">
     </activity>
   </application>
 
