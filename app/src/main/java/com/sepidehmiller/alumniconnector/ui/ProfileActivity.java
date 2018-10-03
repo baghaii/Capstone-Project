@@ -22,7 +22,9 @@ import butterknife.OnItemSelected;
 
 public class ProfileActivity extends AppCompatActivity {
 
-  public static final int US_SPINNER_POSITION = 222;
+  private static final int US_SPINNER_POSITION = 222;
+  private static final int STATE_SPINNER_POSITION = 24;
+  private static final int CLASS_SPINNER_POSITION = 10;
 
   private String mName;
   private FirebaseAuth mFirebaseAuth;
@@ -94,8 +96,8 @@ public class ProfileActivity extends AppCompatActivity {
   }
 
   private void setupUI() {
-    mClassSpinner.setSelection(10);
-    mStateSpinner.setSelection(23);
+    mClassSpinner.setSelection(CLASS_SPINNER_POSITION);
+    mStateSpinner.setSelection(STATE_SPINNER_POSITION);
     mCountrySpinner.setSelection(US_SPINNER_POSITION);
     mNameEditText.setText(mName);
   }
@@ -179,6 +181,8 @@ public class ProfileActivity extends AppCompatActivity {
 
       mDatabaseReference.child(id)
           .setValue(new Member(mName, year, address));
+
+
     }
   }
 

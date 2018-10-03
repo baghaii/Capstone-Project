@@ -44,8 +44,14 @@ public class SelectorActivity extends AppCompatActivity {
   ImageButton mapButton;
 
   @OnClick(R.id.chatButton)
-  public void onClick() {
+  public void onClickChat() {
     Intent intent = new Intent(SelectorActivity.this, ChatActivity.class);
+    startActivity(intent);
+  }
+
+ @OnClick(R.id.mapButton)
+  public void onClickMap() {
+    Intent intent = new Intent(SelectorActivity.this, MapsActivity.class);
     startActivity(intent);
   }
 
