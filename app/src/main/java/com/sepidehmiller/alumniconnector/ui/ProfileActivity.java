@@ -1,7 +1,9 @@
 package com.sepidehmiller.alumniconnector.ui;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.v4.app.JobIntentService;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.EditText;
 import android.widget.Spinner;
@@ -15,12 +17,18 @@ import com.google.firebase.database.ValueEventListener;
 import com.sepidehmiller.alumniconnector.R;
 import com.sepidehmiller.alumniconnector.data.Address;
 import com.sepidehmiller.alumniconnector.data.Member;
+import com.sepidehmiller.alumniconnector.network.GeoCodingService;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnItemSelected;
 
 public class ProfileActivity extends AppCompatActivity {
+
+  public static final String FIREBASE_UID = "FirebaseAuthId";
+  public static final String ADDRESS = "Address";
+
+  public static final int JOB_ID = 1001;
 
   private static final int US_SPINNER_POSITION = 222;
   private static final int STATE_SPINNER_POSITION = 24;
@@ -110,18 +118,20 @@ public class ProfileActivity extends AppCompatActivity {
             Member member = dataSnapshot.getValue(Member.class);
 
             Address address = member.getAddress();
-            String[] addressLine = address.getAddress().split("\n");
-            int length = addressLine.length;
 
-            mAddress1.setText(addressLine[0]);
+            if (address.getStreet() != null) {
+              String[] addressLine = address.getStreet().split("\n");
+              int length = addressLine.length;
 
-            if (length > 1) {
-              mAddress2.setText(addressLine[1]);
+              mAddress1.setText(addressLine[0]);
+
+              if (length > 1) {
+                mAddress2.setText(addressLine[1]);
+              }
+              if (length > 2) {
+                mAddress3.setText(addressLine[2]);
+              }
             }
-            if (length > 2) {
-              mAddress3.setText(addressLine[2]);
-            }
-
             mCityEditText.setText(address.getCity());
             mZipCodeEditText.setText(address.getZipcode());
 
@@ -182,6 +192,11 @@ public class ProfileActivity extends AppCompatActivity {
       mDatabaseReference.child(id)
           .setValue(new Member(mName, year, address));
 
+      Intent intent = new Intent();
+      intent.putExtra(FIREBASE_UID, mFirebaseAuth.getUid());
+      intent.putExtra(ADDRESS, address);
+
+      JobIntentService.enqueueWork(this, GeoCodingService.class, JOB_ID, intent);
 
     }
   }
