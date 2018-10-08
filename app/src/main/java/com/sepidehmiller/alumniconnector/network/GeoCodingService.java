@@ -5,11 +5,19 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.JobIntentService;
 import android.util.Log;
 
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.sepidehmiller.alumniconnector.data.Address;
+import com.sepidehmiller.alumniconnector.data.Member;
 import com.sepidehmiller.alumniconnector.network.data.GeoLocationApiResult;
+import com.sepidehmiller.alumniconnector.network.data.Location;
 import com.sepidehmiller.alumniconnector.ui.ProfileActivity;
 
 import java.io.IOException;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Response;
@@ -28,7 +36,6 @@ public class GeoCodingService extends JobIntentService {
       try {
         Response<GeoLocationApiResult> response = call.execute();
 
-        //TODO - get the locations from the results and do something with that info.
 
         if (response.message().contentEquals("OK")) {
           mGeoLocationApiResult = response.body();
@@ -37,12 +44,47 @@ public class GeoCodingService extends JobIntentService {
       } catch (IOException io) {
         Log.e(TAG, "Could not call Geocoding API");
       }
+
+      if (mGeoLocationApiResult != null) {
+
+        List<Location> locationList = mGeoLocationApiResult.getResults().get(0).getLocations();
+
+        String firebaseUID="";
+        if (intent.hasExtra(ProfileActivity.FIREBASE_UID)) {
+          firebaseUID = intent.getStringExtra(ProfileActivity.FIREBASE_UID);
+        }
+
+        if (locationList.size() == 1) {
+          storeInFirebase(firebaseUID, locationList.get(0));
+        }
+      }
     }
+  }
 
+  private void storeInFirebase(final String firebaseUID, final Location location) {
+    if (!firebaseUID.isEmpty()) {
+      FirebaseDatabase firebaseDb = FirebaseDatabase.getInstance();
+      final DatabaseReference dbReference = firebaseDb.getReference("alumni");
 
+      dbReference.child(firebaseUID).addListenerForSingleValueEvent(
+          new ValueEventListener() {
 
-    if (intent.hasExtra(ProfileActivity.FIREBASE_UID)) {
-      String firebaseUID = intent.getStringExtra(ProfileActivity.FIREBASE_UID);
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+              if (dataSnapshot.exists()) {
+                Member member = dataSnapshot.getValue(Member.class);
+                member.setLatitude(location.getLatLng().getLat().toString());
+                member.setLongitude(location.getLatLng().getLng().toString());
+                dbReference.child(firebaseUID).setValue(member);
+              }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+          }
+      );
     }
   }
 }
