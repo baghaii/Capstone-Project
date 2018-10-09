@@ -6,14 +6,14 @@ public class Member {
   private String mName;
   private int mYear;
   private Address mAddress;
-  private String mLatitude;
-  private String mLongitude;
+  private double mLatitude = 1000;
+  private double mLongitude = 1000;
 
   public Member() {
 
   }
 
-  public Member (String name, int year, Address address, String latitude, String longitude) {
+  public Member (String name, int year, Address address, double latitude, double longitude) {
     this.mName = name;
     this.mYear = year;
     this. mAddress = address;
@@ -43,9 +43,9 @@ public class Member {
     return mAddress;
   }
 
-  public String getLatitude() { return mLatitude; }
+  public double getLatitude() { return mLatitude; }
 
-  public String getLongitude() { return mLongitude; }
+  public double getLongitude() { return mLongitude; }
 
   public void setId(String id) {
     mId = id;
@@ -63,7 +63,7 @@ public class Member {
     mAddress = address;
   }
 
-  public void setLatitude(String latitude) {mLatitude = latitude; }
+  public void setLatitude(double latitude) {mLatitude = latitude; }
 
-  public void setLongitude(String longitude) {mLongitude = longitude; }
+  public void setLongitude(double longitude) {mLongitude = longitude; }
 }

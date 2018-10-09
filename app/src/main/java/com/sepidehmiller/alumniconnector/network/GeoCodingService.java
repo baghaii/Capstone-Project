@@ -73,8 +73,8 @@ public class GeoCodingService extends JobIntentService {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
               if (dataSnapshot.exists()) {
                 Member member = dataSnapshot.getValue(Member.class);
-                member.setLatitude(location.getLatLng().getLat().toString());
-                member.setLongitude(location.getLatLng().getLng().toString());
+                member.setLatitude(location.getLatLng().getLat());
+                member.setLongitude(location.getLatLng().getLng());
                 dbReference.child(firebaseUID).setValue(member);
               }
             }
