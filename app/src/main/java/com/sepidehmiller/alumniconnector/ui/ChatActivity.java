@@ -1,5 +1,7 @@
 package com.sepidehmiller.alumniconnector.ui;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -61,6 +63,7 @@ public class ChatActivity extends AppCompatActivity {
 
     mUserName = mFirebaseAuth.getCurrentUser().getDisplayName();
 
+
     if (mUserName == null || mUserName.isEmpty()) {
       mUserName = ANONYMOUS;
     }
@@ -86,6 +89,8 @@ public class ChatActivity extends AppCompatActivity {
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
           ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
           mMessageAdapter.add(chatMessage);
+
+
         }
 
         @Override
@@ -121,6 +126,15 @@ public class ChatActivity extends AppCompatActivity {
     super.onPause();
     detachDatabaseReadListener();
     mMessageAdapter.clear();
+
+    //Store time in SharedPreferences for widget.
+    SharedPreferences sharedPreferences = getSharedPreferences(
+        getResources().getString(R.string.widget_time), Context.MODE_PRIVATE);
+
+    SharedPreferences.Editor editor = sharedPreferences.edit();
+    long now = System.currentTimeMillis();
+    editor.putLong(getResources().getString(R.string.newest_message), now);
+    editor.apply();
 
   }
 

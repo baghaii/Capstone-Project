@@ -38,7 +38,7 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     mFirebaseAuth = FirebaseAuth.getInstance();
     mFirebaseDatabase = FirebaseDatabase.getInstance();
     mDatabaseReference = mFirebaseDatabase.getReference().child("alumni");
-    
+
     //To make this scalable, we will eventually need to look into clustering.
     //TODO https://developers.google.com/maps/documentation/android-sdk/utility/marker-clustering
 

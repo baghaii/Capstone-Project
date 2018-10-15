@@ -1,0 +1,33 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                android:id="@+id/appwidget"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:padding="@dimen/widget_margin">
+  <TextView
+    android:id="@+id/appwidget_title"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_alignParentTop="true"
+    android:gravity="center_horizontal"
+    android:text="@string/widget_title"
+    android:textColor="@color/white"
+    android:background="@color/chatPurple"
+    android:textSize="18sp"
+    android:textStyle="bold"
+    android:padding="4dp"
+    />
+
+  <TextView
+    android:id="@+id/appwidget_text"
+    android:layout_width="match_parent"
+    android:layout_height="80dp"
+    android:layout_below="@+id/appwidget_title"
+    android:layout_margin="8dp"
+    android:contentDescription="@string/no_messages"
+    android:text="@string/no_messages"
+    android:textColor="@color/black"
+    android:textSize="16sp"
+    />
+
+</RelativeLayout>

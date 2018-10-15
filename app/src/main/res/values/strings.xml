@@ -1,6 +1,11 @@
 <resources>
   <string name="app_name">AlumniConnector</string>
 
+  <!-- alumni_app_widget.xml -->
+  <string name="widget_title">Alumni Connector</string>
+  <string name="widget_data" translatable="false">AlumniAppWidget</string>
+  <string name="newest_message" translatable="false">NewestTime</string>
+
   <!-- activity_chat.xml-->
   <string name="chat_hint">Chat with alumni</string>
 
@@ -345,5 +350,20 @@
     <item>Zimbabwe</item>
   </string-array>
 
+  <!-- MapActivity.java -->
   <string name="title_activity_maps">Map</string>
+
+  <!-- AlumniAppWidget.java -->
+
+  <string name="no_messages">No new chat messages.</string>
+  <string name="new_messages">New chat messages.</string>
+
+  <string-array name="appwidget_text">
+    <item>@string/no_messages</item>
+    <item>@string/new_messages</item>
+  </string-array>
+
+  <string name="add_widget">Add widget</string>
+
+
 </resources>
