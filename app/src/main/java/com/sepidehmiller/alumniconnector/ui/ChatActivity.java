@@ -90,7 +90,6 @@ public class ChatActivity extends AppCompatActivity {
           ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
           mMessageAdapter.add(chatMessage);
 
-
         }
 
         @Override
@@ -129,11 +128,11 @@ public class ChatActivity extends AppCompatActivity {
 
     //Store time in SharedPreferences for widget.
     SharedPreferences sharedPreferences = getSharedPreferences(
-        getResources().getString(R.string.widget_time), Context.MODE_PRIVATE);
+        getResources().getString(R.string.widget_data), Context.MODE_PRIVATE);
 
     SharedPreferences.Editor editor = sharedPreferences.edit();
     long now = System.currentTimeMillis();
-    editor.putLong(getResources().getString(R.string.newest_message), now);
+    editor.putLong(getResources().getString(R.string.last_seen_time), now);
     editor.apply();
 
   }

@@ -22,6 +22,12 @@ public class ChatMessage {
     this.time = new Date().getTime();
   }
 
+  public ChatMessage(String message, String user, long time) {
+    this.message = message;
+    this.user = user;
+    this.time = time;
+  }
+
   public String getMessage() {
     return message;
   }

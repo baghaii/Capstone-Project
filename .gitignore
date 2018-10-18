@@ -1,6 +1,8 @@
+keystore.jks
 *.iml
 .gradle
 gradle.properties
+/app/release
 /app/src/debug/res/values/google_maps_api.xml
 /app/src/release/res/values/google_maps_api.xml
 /app/google-services.json

@@ -61,6 +61,9 @@
         android:value="com.sepidehmiller.alumniconnector.ui.SelectorActivity"/>
     </activity>
 
+    <service android:name=".network.AppWidgetService"
+             android:permission="android.permission.BIND_JOB_SERVICE"/>
+
     <receiver android:name=".ui.AlumniAppWidget">
       <intent-filter>
         <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>

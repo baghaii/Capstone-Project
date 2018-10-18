@@ -1,20 +1,97 @@
 package com.sepidehmiller.alumniconnector.network;
 
-import android.app.Service;
+import android.app.PendingIntent;
+import android.appwidget.AppWidgetManager;
+import android.content.Context;
 import android.content.Intent;
-import android.os.IBinder;
-import android.support.annotation.Nullable;
+import android.content.SharedPreferences;
+import android.support.annotation.NonNull;
+import android.support.v4.app.JobIntentService;
+import android.util.Log;
+import android.widget.RemoteViews;
 
-public class AppWidgetService extends Service {
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
+import com.google.firebase.database.ValueEventListener;
+import com.sepidehmiller.alumniconnector.R;
+import com.sepidehmiller.alumniconnector.data.ChatMessage;
+import com.sepidehmiller.alumniconnector.ui.SelectorActivity;
+
+//http://www.vogella.com/tutorials/AndroidWidgets/article.html#exercise-update-widget-via-a-service
+
+public class AppWidgetService extends JobIntentService {
+
+  private static final String TAG = "AppWidgetService";
+  private AppWidgetManager mAppWidgetManager;
 
   @Override
-  public int onStartCommand(Intent intent, int flags, int startId) {
-    return super.onStartCommand(intent, flags, startId);
+  public void onHandleWork(Intent intent) {
+    Context context = this.getApplicationContext();
+    mAppWidgetManager = AppWidgetManager.getInstance(context);
+    int[] allWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
+
+
+    for (final int widgetId: allWidgetIds) {
+      final RemoteViews remoteViews = new RemoteViews(this.getApplication().getPackageName(),
+          R.layout.alumni_app_widget);
+
+      SharedPreferences sharedPreferences = context.getSharedPreferences(
+          context.getResources().getString(R.string.widget_data), Context.MODE_PRIVATE);
+
+
+      final long lastOpened = sharedPreferences.getLong(
+          context.getResources().getString(R.string.last_seen_time), 0);
+
+      FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+      DatabaseReference databaseReference = firebaseDatabase.getReference().child("messages");
+      Query query = databaseReference.orderByChild("time").limitToLast(1);
+
+      query.addListenerForSingleValueEvent(new ValueEventListener() {
+        @Override
+        public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+          /* It was not obvious that I needed a for loop for a query that returns a single value,
+             but okay. */
+
+          //https://stackoverflow.com/questions/44811526/datasnapshot-has-the-object-but-getvalue-will-return-null
+          for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+            ChatMessage chatMessage = childSnapshot.getValue(ChatMessage.class);
+            setRemoteViews(remoteViews, lastOpened, chatMessage.getTime());
+            mAppWidgetManager.updateAppWidget(widgetId, remoteViews);
+          }
+        }
+
+        @Override
+        public void onCancelled(@NonNull DatabaseError databaseError) {
+
+        }
+      });
+
+
+
+    }
   }
 
-  @Nullable
-  @Override
-  public IBinder onBind(Intent intent) {
-    return null;
+  private void setRemoteViews(RemoteViews remoteViews, long lastOpenedTime, long lastMessageTime) {
+
+    final String[] messages = this.getApplication().getResources().getStringArray(R.array.appwidget_text);
+
+    Log.d(TAG, "lastOpenedTime: " + lastOpenedTime + " lastMessageTime: " + lastMessageTime );
+
+    if (lastOpenedTime < lastMessageTime) {
+      remoteViews.setTextViewText(R.id.appwidget_text, messages[1]);
+      remoteViews.setContentDescription(R.id.appwidget_text, messages[1]);
+    } else {
+      remoteViews.setTextViewText(R.id.appwidget_text, messages[0]);
+      remoteViews.setContentDescription(R.id.appwidget_text, messages[0]);
+    }
+
+    //Create onClickListener for widget
+    Intent newIntent = new Intent (this.getApplicationContext(), SelectorActivity.class);
+    PendingIntent pendingIntent = PendingIntent.getActivity(this.getApplicationContext(), 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+    remoteViews.setOnClickPendingIntent(R.id.appwidget, pendingIntent);
   }
 }

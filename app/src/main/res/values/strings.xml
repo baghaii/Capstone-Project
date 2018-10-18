@@ -4,7 +4,7 @@
   <!-- alumni_app_widget.xml -->
   <string name="widget_title">Alumni Connector</string>
   <string name="widget_data" translatable="false">AlumniAppWidget</string>
-  <string name="newest_message" translatable="false">NewestTime</string>
+  <string name="last_seen_time" translatable="false">LastSeenTime</string>
 
   <!-- activity_chat.xml-->
   <string name="chat_hint">Chat with alumni</string>

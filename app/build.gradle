@@ -2,6 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
+    signingConfigs {
+        release{
+            keyAlias 'capstone'
+            keyPassword 'alumni'
+            storeFile file('../keystore.jks')
+            storePassword 'alumni'
+        }
+    }
     defaultConfig {
         applicationId "com.sepidehmiller.alumniconnector"
         minSdkVersion 16
@@ -15,6 +23,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
     buildTypes.each {
