@@ -364,6 +364,7 @@
   </string-array>
 
   <string name="add_widget">Add widget</string>
+  <string name="user_id">User</string>
 
 
 </resources>

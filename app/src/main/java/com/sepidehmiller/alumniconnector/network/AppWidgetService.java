@@ -4,20 +4,20 @@ import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.support.annotation.NonNull;
 import android.support.v4.app.JobIntentService;
 import android.util.Log;
 import android.widget.RemoteViews;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.sepidehmiller.alumniconnector.R;
 import com.sepidehmiller.alumniconnector.data.ChatMessage;
+import com.sepidehmiller.alumniconnector.data.Member;
 import com.sepidehmiller.alumniconnector.ui.SelectorActivity;
 
 //http://www.vogella.com/tutorials/AndroidWidgets/article.html#exercise-update-widget-via-a-service
@@ -34,19 +34,11 @@ public class AppWidgetService extends JobIntentService {
     int[] allWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 
 
-    for (final int widgetId: allWidgetIds) {
+    for (final int widgetId : allWidgetIds) {
       final RemoteViews remoteViews = new RemoteViews(this.getApplication().getPackageName(),
           R.layout.alumni_app_widget);
 
-      SharedPreferences sharedPreferences = context.getSharedPreferences(
-          context.getResources().getString(R.string.widget_data), Context.MODE_PRIVATE);
-
-
-      final long lastOpened = sharedPreferences.getLong(
-          context.getResources().getString(R.string.last_seen_time), 0);
-
-      FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-      DatabaseReference databaseReference = firebaseDatabase.getReference().child("messages");
+      final DatabaseReference databaseReference = FirebaseHelper.getMessagesTable();
       Query query = databaseReference.orderByChild("time").limitToLast(1);
 
       query.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -56,10 +48,29 @@ public class AppWidgetService extends JobIntentService {
              but okay. */
 
           //https://stackoverflow.com/questions/44811526/datasnapshot-has-the-object-but-getvalue-will-return-null
-          for (DataSnapshot childSnapshot: dataSnapshot.getChildren()) {
+          for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
             ChatMessage chatMessage = childSnapshot.getValue(ChatMessage.class);
-            setRemoteViews(remoteViews, lastOpened, chatMessage.getTime());
-            mAppWidgetManager.updateAppWidget(widgetId, remoteViews);
+            final long chatTime = chatMessage.getTime();
+            DatabaseReference alumniReference = FirebaseHelper.getAlumniTable();
+            String uid = FirebaseAuth.getInstance().getUid();
+            if (uid != null) {
+              alumniReference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                  Member member = dataSnapshot.getValue(Member.class);
+                  if (member != null) {
+                    long time = member.getLastSeen();
+                    setRemoteViews(remoteViews, time, chatTime);
+                    mAppWidgetManager.updateAppWidget(widgetId, remoteViews);
+                  }
+                }
+
+                @Override
+                public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                }
+              });
+            }
           }
         }
 
@@ -70,7 +81,6 @@ public class AppWidgetService extends JobIntentService {
       });
 
 
-
     }
   }
 
@@ -78,7 +88,8 @@ public class AppWidgetService extends JobIntentService {
 
     final String[] messages = this.getApplication().getResources().getStringArray(R.array.appwidget_text);
 
-    Log.d(TAG, "lastOpenedTime: " + lastOpenedTime + " lastMessageTime: " + lastMessageTime );
+    Log.d(TAG, "lastOpenedTime: " + lastOpenedTime + " lastMessageTime: " + lastMessageTime);
+
 
     if (lastOpenedTime < lastMessageTime) {
       remoteViews.setTextViewText(R.id.appwidget_text, messages[1]);
@@ -88,8 +99,9 @@ public class AppWidgetService extends JobIntentService {
       remoteViews.setContentDescription(R.id.appwidget_text, messages[0]);
     }
 
+
     //Create onClickListener for widget
-    Intent newIntent = new Intent (this.getApplicationContext(), SelectorActivity.class);
+    Intent newIntent = new Intent(this.getApplicationContext(), SelectorActivity.class);
     PendingIntent pendingIntent = PendingIntent.getActivity(this.getApplicationContext(), 0, newIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 
     remoteViews.setOnClickPendingIntent(R.id.appwidget, pendingIntent);

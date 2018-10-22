@@ -1,8 +1,6 @@
 package com.sepidehmiller.alumniconnector.ui;
 
 import android.animation.ObjectAnimator;
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -149,16 +147,6 @@ public class ChatActivity extends AppCompatActivity {
 
       }
     });
-
-    //Store time in SharedPreferences for widget.
-    //TODO - Delete the SharedPreferences stuff if the widget works.
-    SharedPreferences sharedPreferences = getSharedPreferences(
-        getResources().getString(R.string.widget_data), Context.MODE_PRIVATE);
-
-    SharedPreferences.Editor editor = sharedPreferences.edit();
-    long now = System.currentTimeMillis();
-    editor.putLong(getResources().getString(R.string.last_seen_time), now);
-    editor.apply();
 
   }
 

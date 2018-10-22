@@ -13,7 +13,7 @@ import com.sepidehmiller.alumniconnector.network.AppWidgetService;
  * Implementation of App Widget functionality.
  */
 public class AlumniAppWidget extends AppWidgetProvider {
-  private static final int JOB_ID = 2001;
+  public static final int JOB_ID = 2001;
 
   @Override
   public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
