@@ -1,23 +1,27 @@
 package com.sepidehmiller.alumniconnector.ui;
 
+import android.animation.ObjectAnimator;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Display;
 import android.widget.EditText;
 import android.widget.ListView;
 
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.sepidehmiller.alumniconnector.R;
 import com.sepidehmiller.alumniconnector.data.ChatMessage;
+import com.sepidehmiller.alumniconnector.data.Member;
+import com.sepidehmiller.alumniconnector.network.FirebaseHelper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +36,7 @@ import butterknife.OnTextChanged;
 
 
 public class ChatActivity extends AppCompatActivity {
+  public static final String TAG = "ChatActivity";
   private final String ANONYMOUS = "Anonymous";
 
   @BindView(R.id.floatingActionButton)
@@ -43,8 +48,6 @@ public class ChatActivity extends AppCompatActivity {
   @BindView(R.id.chatListView)
   ListView mChatListView;
 
-  private FirebaseAuth mFirebaseAuth;
-  private FirebaseDatabase mFirebaseDatabase;
   private DatabaseReference mDatabaseReference;
   private ChildEventListener mChildEventListener;
 
@@ -57,11 +60,9 @@ public class ChatActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_chat);
 
-    mFirebaseAuth = FirebaseAuth.getInstance();
-    mFirebaseDatabase = FirebaseDatabase.getInstance();
-    mDatabaseReference = mFirebaseDatabase.getReference().child("messages");
+    mDatabaseReference = FirebaseHelper.getMessagesTable();
 
-    mUserName = mFirebaseAuth.getCurrentUser().getDisplayName();
+    mUserName = FirebaseHelper.getFirebaseAuthName();
 
 
     if (mUserName == null || mUserName.isEmpty()) {
@@ -126,7 +127,31 @@ public class ChatActivity extends AppCompatActivity {
     detachDatabaseReadListener();
     mMessageAdapter.clear();
 
+    final DatabaseReference memberReference = FirebaseHelper.getAlumniTable();
+
+    memberReference.child(FirebaseHelper.getUid()).addListenerForSingleValueEvent(new ValueEventListener() {
+      @Override
+      public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+        if (dataSnapshot.exists()) {
+          Member member = dataSnapshot.getValue(Member.class);
+          member.setLastSeen(System.currentTimeMillis());
+          memberReference.child(FirebaseHelper.getUid()).setValue(member);
+        } else {
+          Member member = new Member(FirebaseHelper.getFirebaseAuthName(),
+              System.currentTimeMillis());
+          memberReference.child(FirebaseHelper.getUid())
+              .setValue(member);
+        }
+      }
+
+      @Override
+      public void onCancelled(@NonNull DatabaseError databaseError) {
+
+      }
+    });
+
     //Store time in SharedPreferences for widget.
+    //TODO - Delete the SharedPreferences stuff if the widget works.
     SharedPreferences sharedPreferences = getSharedPreferences(
         getResources().getString(R.string.widget_data), Context.MODE_PRIVATE);
 
@@ -160,7 +185,19 @@ public class ChatActivity extends AppCompatActivity {
         .push()
         .setValue(new ChatMessage(message, mUserName));
 
+
+    Display display = getWindowManager().getDefaultDisplay();
+    Point size = new Point();
+    display.getSize(size);
+    float width = size.x;
+
+    ObjectAnimator fabAnimation = ObjectAnimator.ofFloat(mFab,
+        "translationX", -width, 0f);
+    fabAnimation.setDuration(300);
+    fabAnimation.start();
+
     mMessageText.setText("");
+
   }
 
 }

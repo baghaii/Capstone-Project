@@ -66,6 +66,9 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
     mMap.setMaxZoomPreference(14.0f);
     mMap.getUiSettings().setZoomControlsEnabled(true);
     mMap.getUiSettings().setZoomGesturesEnabled(true);
+    // The default camera position is the lat/lon value of the town where the
+    // school is located.
+    mMap.moveCamera(CameraUpdateFactory.newLatLng(new LatLng(33.507083, -88.49678)));
 
   }
 
@@ -75,6 +78,10 @@ public class MapsActivity extends FragmentActivity implements OnMapReadyCallback
         @Override
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
           Member member = dataSnapshot.getValue(Member.class);
+          if (member == null) {
+            return;
+          }
+
           String uid = dataSnapshot.getKey();
 
           if (member.getLatitude() != 1000 && member.getLongitude() != 1000) {

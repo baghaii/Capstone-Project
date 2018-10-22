@@ -8,9 +8,21 @@ public class Member {
   private Address mAddress;
   private double mLatitude = 1000;
   private double mLongitude = 1000;
+  private long mLastSeen;
 
   public Member() {
 
+  }
+
+  public Member (String name, long lastSeen) {
+    this.mName = name;
+    this.mLastSeen = lastSeen;
+  }
+
+  public Member(String name, int year, Address address) {
+    this.mName = name;
+    this.mYear = year;
+    this. mAddress = address;
   }
 
   public Member (String name, int year, Address address, double latitude, double longitude) {
@@ -21,11 +33,7 @@ public class Member {
     this.mLongitude = longitude;
   }
 
-  public Member(String name, int year, Address address) {
-    this.mName = name;
-    this.mYear = year;
-    this. mAddress = address;
-  }
+
 
   public String getId() {
     return mId;
@@ -47,6 +55,8 @@ public class Member {
 
   public double getLongitude() { return mLongitude; }
 
+  public long getLastSeen() { return mLastSeen; }
+
   public void setId(String id) {
     mId = id;
   }
@@ -66,4 +76,6 @@ public class Member {
   public void setLatitude(double latitude) {mLatitude = latitude; }
 
   public void setLongitude(double longitude) {mLongitude = longitude; }
+
+  public void setLastSeen(long lastSeen) { mLastSeen = lastSeen;}
 }

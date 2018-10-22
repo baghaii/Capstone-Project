@@ -117,7 +117,15 @@ public class ProfileActivity extends AppCompatActivity {
           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
             Member member = dataSnapshot.getValue(Member.class);
 
+            if (member == null) {
+              return;
+            }
+
             Address address = member.getAddress();
+
+            if (address == null) {
+              return;
+            }
 
             if (address.getStreet() != null) {
               String[] addressLine = address.getStreet().split("\n");

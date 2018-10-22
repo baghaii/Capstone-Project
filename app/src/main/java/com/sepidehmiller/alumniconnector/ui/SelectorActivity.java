@@ -1,9 +1,14 @@
 package com.sepidehmiller.alumniconnector.ui;
 
+import android.app.ActivityOptions;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
+import android.support.v4.app.JobIntentService;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -14,6 +19,7 @@ import android.widget.Toast;
 import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.sepidehmiller.alumniconnector.R;
+import com.sepidehmiller.alumniconnector.network.AppWidgetService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,13 +52,19 @@ public class SelectorActivity extends AppCompatActivity {
   @OnClick(R.id.chatButton)
   public void onClickChat() {
     Intent intent = new Intent(SelectorActivity.this, ChatActivity.class);
-    startActivity(intent);
+
+    //http://www.vogella.com/tutorials/AndroidAnimation/article.html#exercise-using-the-properties-animations-api
+    ActivityOptions options = ActivityOptions.makeScaleUpAnimation(chatButton, 0,
+        0, chatButton.getWidth(), chatButton.getHeight());
+    startActivity(intent, options.toBundle());
   }
 
  @OnClick(R.id.mapButton)
   public void onClickMap() {
     Intent intent = new Intent(SelectorActivity.this, MapsActivity.class);
-    startActivity(intent);
+    ActivityOptions options = ActivityOptions.makeScaleUpAnimation(mapButton, 0,
+       0, mapButton.getWidth(), mapButton.getHeight());
+    startActivity(intent, options.toBundle());
   }
 
   @Override
@@ -71,6 +83,9 @@ public class SelectorActivity extends AppCompatActivity {
           //signed in
           mUserName = mFirebaseAuth.getCurrentUser().getDisplayName();
           selectorLayout.setVisibility(View.VISIBLE);
+          updateWidget();
+
+
         } else {
           //signed out
           mUserName = ANONYMOUS;
@@ -89,6 +104,7 @@ public class SelectorActivity extends AppCompatActivity {
         }
       }
     };
+
   }
 
   @Override
@@ -149,5 +165,15 @@ public class SelectorActivity extends AppCompatActivity {
     Intent intent = new Intent(SelectorActivity.this, ProfileActivity.class);
     intent.putExtra(NAME_EXTRA, mUserName);
     return intent;
+  }
+
+  private void updateWidget() {
+    Context context = SelectorActivity.this;
+    ComponentName thisWidget = new ComponentName(context, AlumniAppWidget.class);
+    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(SelectorActivity.this);
+    int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+    Intent intent = new Intent(context.getApplicationContext(), AppWidgetService.class);
+    intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
+    JobIntentService.enqueueWork(context, AppWidgetService.class, AlumniAppWidget.JOB_ID, intent);
   }
 }
