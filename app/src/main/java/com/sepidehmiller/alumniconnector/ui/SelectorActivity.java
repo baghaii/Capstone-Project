@@ -5,14 +5,17 @@ import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.JobIntentService;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Explode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
@@ -70,6 +73,17 @@ public class SelectorActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+
+      Window window = getWindow();
+      Explode explode = new Explode();
+      explode.setDuration(3000);
+      window.setExitTransition(explode);
+      window.setReenterTransition(explode);
+    }
+
     setContentView(R.layout.activity_selector);
 
     ButterKnife.bind(this);
@@ -119,7 +133,12 @@ public class SelectorActivity extends AppCompatActivity {
 
       case R.id.menu_profile:
         Intent intent = makeProfileIntent();
-        startActivity(intent);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+          startActivity(intent,
+              ActivityOptions.makeSceneTransitionAnimation(this).toBundle());
+        } else {
+          startActivity(intent);
+        }
         return true;
 
       case R.id.menu_sign_out:

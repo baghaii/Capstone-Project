@@ -1,11 +1,16 @@
 package com.sepidehmiller.alumniconnector.ui;
 
 import android.animation.ObjectAnimator;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.Context;
+import android.content.Intent;
 import android.graphics.Point;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v4.app.JobIntentService;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
 import android.widget.EditText;
@@ -19,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.sepidehmiller.alumniconnector.R;
 import com.sepidehmiller.alumniconnector.data.ChatMessage;
 import com.sepidehmiller.alumniconnector.data.Member;
+import com.sepidehmiller.alumniconnector.network.AppWidgetService;
 import com.sepidehmiller.alumniconnector.network.FirebaseHelper;
 
 import java.util.ArrayList;
@@ -88,6 +94,7 @@ public class ChatActivity extends AppCompatActivity {
         public void onChildAdded(@NonNull DataSnapshot dataSnapshot, @Nullable String s) {
           ChatMessage chatMessage = dataSnapshot.getValue(ChatMessage.class);
           mMessageAdapter.add(chatMessage);
+          updateWidget();
 
         }
 
@@ -186,6 +193,16 @@ public class ChatActivity extends AppCompatActivity {
 
     mMessageText.setText("");
 
+  }
+
+  private void updateWidget() {
+    Context context = ChatActivity.this;
+    ComponentName thisWidget = new ComponentName(context, AlumniAppWidget.class);
+    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(ChatActivity.this);
+    int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
+    Intent intent = new Intent(context.getApplicationContext(), AppWidgetService.class);
+    intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
+    JobIntentService.enqueueWork(context, AppWidgetService.class, AlumniAppWidget.JOB_ID, intent);
   }
 
 }

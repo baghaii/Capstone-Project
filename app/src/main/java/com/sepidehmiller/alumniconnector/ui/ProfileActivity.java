@@ -1,10 +1,13 @@
 package com.sepidehmiller.alumniconnector.ui;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.JobIntentService;
 import android.support.v7.app.AppCompatActivity;
+import android.transition.Explode;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.Spinner;
 
@@ -82,6 +85,15 @@ public class ProfileActivity extends AppCompatActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+      getWindow().requestFeature(Window.FEATURE_CONTENT_TRANSITIONS);
+      getWindow().setAllowEnterTransitionOverlap(true);
+      Window window = getWindow();
+      Explode explode = new Explode();
+      explode.setDuration(2000);
+      window.setEnterTransition(explode);
+      window.setReturnTransition(explode);
+    }
     setContentView(R.layout.activity_profile);
     ButterKnife.bind(this);
 
