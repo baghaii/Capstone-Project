@@ -93,6 +93,7 @@ public class ProfileActivity extends AppCompatActivity {
       explode.setDuration(2000);
       window.setEnterTransition(explode);
       window.setReturnTransition(explode);
+      window.setExitTransition(explode);
     }
     setContentView(R.layout.activity_profile);
     ButterKnife.bind(this);
