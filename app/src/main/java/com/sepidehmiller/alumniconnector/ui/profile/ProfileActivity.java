@@ -1,4 +1,4 @@
-package com.sepidehmiller.alumniconnector.ui;
+package com.sepidehmiller.alumniconnector.ui.profile;
 
 import android.content.Intent;
 import android.os.Build;
@@ -21,6 +21,7 @@ import com.sepidehmiller.alumniconnector.R;
 import com.sepidehmiller.alumniconnector.data.Address;
 import com.sepidehmiller.alumniconnector.data.Member;
 import com.sepidehmiller.alumniconnector.network.GeoCodingService;
+import com.sepidehmiller.alumniconnector.ui.selector.SelectorActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

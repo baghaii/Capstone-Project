@@ -1,4 +1,4 @@
-package com.sepidehmiller.alumniconnector.ui;
+package com.sepidehmiller.alumniconnector.ui.widget;
 
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;

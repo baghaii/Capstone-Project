@@ -14,7 +14,7 @@ import com.sepidehmiller.alumniconnector.data.Address;
 import com.sepidehmiller.alumniconnector.data.Member;
 import com.sepidehmiller.alumniconnector.network.data.GeoLocationApiResult;
 import com.sepidehmiller.alumniconnector.network.data.Location;
-import com.sepidehmiller.alumniconnector.ui.ProfileActivity;
+import com.sepidehmiller.alumniconnector.ui.profile.ProfileActivity;
 
 import java.io.IOException;
 import java.util.List;

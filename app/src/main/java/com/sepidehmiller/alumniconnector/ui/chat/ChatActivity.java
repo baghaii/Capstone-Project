@@ -1,4 +1,4 @@
-package com.sepidehmiller.alumniconnector.ui;
+package com.sepidehmiller.alumniconnector.ui.chat;
 
 import android.animation.ObjectAnimator;
 import android.appwidget.AppWidgetManager;
@@ -26,6 +26,7 @@ import com.sepidehmiller.alumniconnector.data.ChatMessage;
 import com.sepidehmiller.alumniconnector.data.Member;
 import com.sepidehmiller.alumniconnector.network.AppWidgetService;
 import com.sepidehmiller.alumniconnector.network.FirebaseHelper;
+import com.sepidehmiller.alumniconnector.ui.widget.AlumniAppWidget;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -163,7 +164,7 @@ public class ChatActivity extends AppCompatActivity {
     attachDatabaseReadListener();
   }
 
-  @OnTextChanged(R.id.chatEditText)
+@OnTextChanged(R.id.chatEditText)
   public void onTextChanged(CharSequence text) {
     if (text.toString().trim().length() > 0) {
       mFab.setEnabled(true);
@@ -172,7 +173,7 @@ public class ChatActivity extends AppCompatActivity {
     }
   }
 
-  @OnClick(R.id.floatingActionButton)
+@OnClick(R.id.floatingActionButton)
   public void onClick() {
     String message = mMessageText.getText().toString();
 

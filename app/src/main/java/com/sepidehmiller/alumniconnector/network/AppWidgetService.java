@@ -18,7 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.sepidehmiller.alumniconnector.R;
 import com.sepidehmiller.alumniconnector.data.ChatMessage;
 import com.sepidehmiller.alumniconnector.data.Member;
-import com.sepidehmiller.alumniconnector.ui.SelectorActivity;
+import com.sepidehmiller.alumniconnector.ui.selector.SelectorActivity;
 
 //http://www.vogella.com/tutorials/AndroidWidgets/article.html#exercise-update-widget-via-a-service
 

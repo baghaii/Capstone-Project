@@ -7,7 +7,7 @@
   android:layout_width="match_parent"
   android:layout_height="match_parent"
   android:visibility="invisible"
-  tools:context=".ui.SelectorActivity">
+  tools:context=".ui.selector.SelectorActivity">
 
   <!-- This is a chain that is centered
   https://stackoverflow.com/questions/43376373/how-to-center-vertically-the-constraintlayout-content-in-android-studio#43380105 -->

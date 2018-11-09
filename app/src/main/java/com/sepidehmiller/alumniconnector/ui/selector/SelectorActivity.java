@@ -1,4 +1,4 @@
-package com.sepidehmiller.alumniconnector.ui;
+package com.sepidehmiller.alumniconnector.ui.selector;
 
 import android.app.ActivityOptions;
 import android.appwidget.AppWidgetManager;
@@ -23,6 +23,10 @@ import com.firebase.ui.auth.AuthUI;
 import com.google.firebase.auth.FirebaseAuth;
 import com.sepidehmiller.alumniconnector.R;
 import com.sepidehmiller.alumniconnector.network.AppWidgetService;
+import com.sepidehmiller.alumniconnector.ui.chat.ChatActivity;
+import com.sepidehmiller.alumniconnector.ui.map.MapsActivity;
+import com.sepidehmiller.alumniconnector.ui.profile.ProfileActivity;
+import com.sepidehmiller.alumniconnector.ui.widget.AlumniAppWidget;
 
 import java.util.Arrays;
 import java.util.List;

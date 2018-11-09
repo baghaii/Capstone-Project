@@ -1,4 +1,4 @@
-package com.sepidehmiller.alumniconnector.ui;
+package com.sepidehmiller.alumniconnector.ui.chat;
 
 import android.app.Activity;
 import android.content.Context;

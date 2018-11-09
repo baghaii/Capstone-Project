@@ -1,4 +1,4 @@
-package com.sepidehmiller.alumniconnector.ui;
+package com.sepidehmiller.alumniconnector.ui.map;
 
 import android.os.Bundle;
 import android.support.annotation.NonNull;
