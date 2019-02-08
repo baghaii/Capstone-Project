@@ -46,6 +46,7 @@ public class MessageAdapter extends ArrayAdapter<ChatMessage> {
     ButterKnife.bind(this, convertView);
 
     ChatMessage chatMessage = getItem(position);
+
     messageText.setText(chatMessage.getMessage());
     messageUser.setText(chatMessage.getUser());
     messageTime.setText(DateFormat.format("dd-MM-yyyy (HH:mm:ss)",

@@ -42,7 +42,7 @@ import butterknife.OnTextChanged;
 
 public class ChatActivity extends AppCompatActivity {
   public static final String TAG = "ChatActivity";
-  private final String ANONYMOUS = "Anonymous";
+  private static final String ANONYMOUS = "Anonymous";
 
   @BindView(R.id.floatingActionButton)
   FloatingActionButton mFab;
@@ -140,7 +140,7 @@ public class ChatActivity extends AppCompatActivity {
       public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
         if (dataSnapshot.exists()) {
           Member member = dataSnapshot.getValue(Member.class);
-          member.setLastSeen(System.currentTimeMillis());
+          member.setLastSeen( System.currentTimeMillis());
           memberReference.child(FirebaseHelper.getUid()).setValue(member);
         } else {
           Member member = new Member(FirebaseHelper.getFirebaseAuthName(),

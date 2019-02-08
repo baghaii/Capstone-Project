@@ -2,14 +2,12 @@ keystore.jks
 *.iml
 .gradle
 gradle.properties
+.idea
 /app/release
 /app/src/debug/res/values/google_maps_api.xml
 /app/src/release/res/values/google_maps_api.xml
 /app/google-services.json
 /local.properties
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
 .DS_Store
 /build
 /captures

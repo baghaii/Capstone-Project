@@ -35,7 +35,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-//TODO create an indetermine progress frame to load before log in.
+//TODO create an indeterminate progress frame to load before log in.
 
 public class SelectorActivity extends AppCompatActivity {
   public static final String NAME_EXTRA = "Name";
