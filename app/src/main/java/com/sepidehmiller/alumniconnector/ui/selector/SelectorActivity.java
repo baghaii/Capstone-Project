@@ -148,8 +148,10 @@ public class SelectorActivity extends AppCompatActivity {
       case R.id.menu_sign_out:
         AuthUI.getInstance().signOut(this);
         return true;
+
+      default:
+        return super.onOptionsItemSelected(item);
     }
-    return super.onOptionsItemSelected(item);
   }
 
   @Override
