@@ -13,8 +13,11 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.JobIntentService;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -26,6 +29,7 @@ import com.sepidehmiller.alumniconnector.data.ChatMessage;
 import com.sepidehmiller.alumniconnector.data.Member;
 import com.sepidehmiller.alumniconnector.network.AppWidgetService;
 import com.sepidehmiller.alumniconnector.network.FirebaseHelper;
+import com.sepidehmiller.alumniconnector.ui.alumni.AlumniProfileActivity;
 import com.sepidehmiller.alumniconnector.ui.widget.AlumniAppWidget;
 
 import java.util.ArrayList;
@@ -59,6 +63,7 @@ public class ChatActivity extends AppCompatActivity {
   private MessageAdapter mMessageAdapter;
 
   private String mUserName;
+  private String mUserId;
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
@@ -68,6 +73,7 @@ public class ChatActivity extends AppCompatActivity {
     mDatabaseReference = FirebaseHelper.getMessagesTable();
 
     mUserName = FirebaseHelper.getFirebaseAuthName();
+    mUserId = FirebaseHelper.getUid();
 
 
     if (mUserName == null || mUserName.isEmpty()) {
@@ -79,6 +85,16 @@ public class ChatActivity extends AppCompatActivity {
     List<ChatMessage> chatMessages = new ArrayList<>();
     mMessageAdapter = new MessageAdapter(this, R.layout.item_message, chatMessages);
     mChatListView.setAdapter(mMessageAdapter);
+    mChatListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+      @Override
+      public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        ChatMessage chatMessage = mMessageAdapter.getItem(position);
+        Toast.makeText(ChatActivity.this, chatMessage.getUserId(), Toast.LENGTH_LONG).show();
+        Intent intent = new Intent(ChatActivity.this, AlumniProfileActivity.class);
+        intent.putExtra( AlumniProfileActivity.KEY_USER_ID, chatMessage.getUserId());
+        startActivity(intent);
+      }
+    });
 
     mFab.setBackgroundTintList(getResources().getColorStateList(R.color.button_color_list));
     mFab.setEnabled(false);
@@ -140,7 +156,7 @@ public class ChatActivity extends AppCompatActivity {
       public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
         if (dataSnapshot.exists()) {
           Member member = dataSnapshot.getValue(Member.class);
-          member.setLastSeen( System.currentTimeMillis());
+          member.setLastSeen(System.currentTimeMillis());
           memberReference.child(FirebaseHelper.getUid()).setValue(member);
         } else {
           Member member = new Member(FirebaseHelper.getFirebaseAuthName(),
@@ -179,8 +195,7 @@ public class ChatActivity extends AppCompatActivity {
 
     mDatabaseReference
         .push()
-        .setValue(new ChatMessage(message, mUserName));
-
+        .setValue(new ChatMessage(message, mUserName, mUserId));
 
     Display display = getWindowManager().getDefaultDisplay();
     Point size = new Point();

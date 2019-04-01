@@ -1,6 +1,8 @@
 # Alumni Connector
 Alumni Connector is the capstone project for the Android Nanogree program. The proposal for this project can be found in [Capstone_Stage1.pdf](Capstone_Stage1.pdf).
 
+The login functionality of this app and the ChatActivity will not work without the google-services.json file. The map will not work without a google_maps_api.xml file. 
+
 This is an App for the alumni of the Mississippi School for Mathematics and Science. The school has existed since 1990. A lot of the alumni live in Mississippi, though there are alumni all over the US now. Very few alumni live in other countries. The app will be expanded to work for alumni outside of the US eventually. 
 However, the way I have worded my API query to Mapquest does not allow for locations in other countries to be queried yet.  
 

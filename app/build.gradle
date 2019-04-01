@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 27
     signingConfigs {
-        release{
+        release {
             keyAlias 'capstone'
             keyPassword 'alumni'
             storeFile file('../keystore.jks')

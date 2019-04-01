@@ -3,7 +3,6 @@
           xmlns:android="http://schemas.android.com/apk/res/android">
 
   <uses-permission android:name="android.permission.INTERNET"/>
-
   <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
@@ -19,10 +18,12 @@
     android:roundIcon="@mipmap/ic_launcher_round"
     android:supportsRtl="true"
     android:theme="@style/AppTheme">
+    <activity android:name=".ui.alumni.AlumniProfileActivity">
+    </activity>
     <activity
       android:name=".ui.chat.ChatActivity"
-      android:windowSoftInputMode="stateHidden"
-      android:parentActivityName=".ui.selector.SelectorActivity">
+      android:parentActivityName=".ui.selector.SelectorActivity"
+      android:windowSoftInputMode="stateHidden">
     </activity>
     <activity
       android:name=".ui.selector.SelectorActivity"
@@ -63,8 +64,9 @@
         android:value="com.sepidehmiller.alumniconnector.ui.selector.SelectorActivity"/>
     </activity>
 
-    <service android:name=".network.AppWidgetService"
-             android:permission="android.permission.BIND_JOB_SERVICE"/>
+    <service
+      android:name=".network.AppWidgetService"
+      android:permission="android.permission.BIND_JOB_SERVICE"/>
 
     <receiver android:name=".ui.widget.AlumniAppWidget">
       <intent-filter>
