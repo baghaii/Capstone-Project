@@ -350,8 +350,15 @@
     <item>Zimbabwe</item>
   </string-array>
 
+  <!-- AlumniProfileActivity.java -->
+  <string name="class_format">(%1$s)</string>
+
+  <string name="address_format">%1$s\n
+  %2$s, %3$s %4$s\n
+  %5$s</string>
   <!-- MapActivity.java -->
   <string name="title_activity_maps">Map</string>
+
 
   <!-- AlumniAppWidget.java -->
 

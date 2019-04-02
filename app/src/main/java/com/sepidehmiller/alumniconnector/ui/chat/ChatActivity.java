@@ -75,7 +75,6 @@ public class ChatActivity extends AppCompatActivity {
     mUserName = FirebaseHelper.getFirebaseAuthName();
     mUserId = FirebaseHelper.getUid();
 
-
     if (mUserName == null || mUserName.isEmpty()) {
       mUserName = ANONYMOUS;
     }
