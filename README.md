@@ -10,6 +10,21 @@ I need more information on addresses in other countries to make it work. Do othe
 
 In this project, I am using ButterKnife for the first time and Firebase database and authorization for the first time. 
 
+## SelectorActivity
+This activity allows a user to update their profile or log out from the menu. It allows a user to chat or view the map from the buttons.
+
+<img src="pics/SelectorActivity.png" width="300">
+
+## ChatActivity
+This activity allows a user to send chat messages to be seen by all of the alumni.
+
+<img src="pics/ChatActivity.png" width="300">
+
+## MapActivity
+This activity allows a user to see a map with pins marking all of the alumni. The blue pin represents the user's own address.
+
+<img src="pics/MapActivity.png" width="300">
+
 ## Attributions
 Thanks to Nhor Phai for [the icon](https://www.flaticon.com/free-icon/plug_1104875) for the log in screen.
 
