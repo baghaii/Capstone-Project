@@ -8,20 +8,17 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.sepidehmiller.alumniconnector.R;
 import com.sepidehmiller.alumniconnector.data.Address;
 import com.sepidehmiller.alumniconnector.data.Member;
+import com.sepidehmiller.alumniconnector.network.FirebaseHelper;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
 public class AlumniProfileActivity extends AppCompatActivity {
   public static final String KEY_USER_ID = "UserId";
-
-  private DatabaseReference mDatabaseReference;
 
   @BindView(R.id.AlumniNameTextView)
   TextView mAlumniName;
@@ -39,9 +36,6 @@ public class AlumniProfileActivity extends AppCompatActivity {
 
     ButterKnife.bind(this);
 
-    FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
-    mDatabaseReference = mFirebaseDatabase.getReference().child("alumni");
-
     Bundle bundle = getIntent().getExtras();
 
     if (bundle != null && bundle.containsKey(KEY_USER_ID)) {
@@ -53,7 +47,7 @@ public class AlumniProfileActivity extends AppCompatActivity {
   }
 
   private void loadData(String key) {
-    mDatabaseReference.child(key).addListenerForSingleValueEvent(
+    FirebaseHelper.getAlumniByUID(key).addListenerForSingleValueEvent(
         new ValueEventListener() {
           @Override
           public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -69,10 +63,12 @@ public class AlumniProfileActivity extends AppCompatActivity {
 
             int year = member.getYear();
 
-            String strYear = String.format(getResources().getString(R.string.class_format),
-                String.valueOf(year));
+            if (year > 0) {
+              String strYear = String.format(getResources().getString(R.string.class_format),
+                  String.valueOf(year));
 
-            mAlumniClass.setText(strYear);
+              mAlumniClass.setText(strYear);
+            }
 
             Address address = member.getAddress();
 

@@ -38,8 +38,7 @@ public class AppWidgetService extends JobIntentService {
       final RemoteViews remoteViews = new RemoteViews(this.getApplication().getPackageName(),
           R.layout.alumni_app_widget);
 
-      final DatabaseReference databaseReference = FirebaseHelper.getMessagesTable();
-      Query query = databaseReference.orderByChild("time").limitToLast(1);
+      Query query = FirebaseHelper.getLastMessageTime();
 
       query.addListenerForSingleValueEvent(new ValueEventListener() {
         @Override
@@ -51,10 +50,10 @@ public class AppWidgetService extends JobIntentService {
           for (DataSnapshot childSnapshot : dataSnapshot.getChildren()) {
             ChatMessage chatMessage = childSnapshot.getValue(ChatMessage.class);
             final long chatTime = chatMessage.getTime();
-            DatabaseReference alumniReference = FirebaseHelper.getAlumniTable();
             String uid = FirebaseAuth.getInstance().getUid();
+            DatabaseReference alumniReference = FirebaseHelper.getAlumniByUID(uid);
             if (uid != null) {
-              alumniReference.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+              alumniReference.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                   Member member = dataSnapshot.getValue(Member.class);

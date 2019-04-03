@@ -3,6 +3,7 @@ package com.sepidehmiller.alumniconnector.network;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 
 public class FirebaseHelper {
   private static FirebaseDatabase mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -14,6 +15,14 @@ public class FirebaseHelper {
 
   public static DatabaseReference getMessagesTable() {
     return mFirebaseDatabase.getReference().child("messages");
+  }
+
+  public static Query getLastMessageTime() {
+    return getMessagesTable().orderByChild("time").limitToLast(1);
+  }
+
+  public static DatabaseReference getAlumniByUID(String uid) {
+    return getAlumniTable().child(uid);
   }
 
   public static String getUid() {
